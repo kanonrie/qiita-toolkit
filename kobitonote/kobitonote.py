@@ -16,7 +16,7 @@ import time
 NOTEBOOK_FOR_KOBITO = 'Kobito'
 
 ## Kobito.db の所在PATH
-DB_PATH = os.environ['HOME'] + '/Library/Kobito/Kobito.db'
+DB_PATH = os.environ['HOME'] + '/Library/Containers/com.qiita.Kobito/Data/Library/Kobito/Kobito.db'
 
 ## Kobito.db 内部時刻のオフセット
 TIME_OFFSET = 978307200.0 # time.mktime(time.strptime("Mon Jan 1 09:00:00 2001"))
@@ -101,7 +101,7 @@ end tell
 
 ## AppleScriptを実行
 def run_osascript(script, *args):
-    p = subprocess.Popen(['arch', '-i386', 'osascript', '-e', script] +
+    p = subprocess.Popen(['arch', '-x86_64', 'osascript', '-e', script] +
                          [unicode(arg).encode('utf8') for arg in args],
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     err = p.wait()
@@ -175,7 +175,7 @@ def get_kobito_items_tags(conn, tags=None):
 ## Kobitoのアイテムを取得
 def get_kobito_items(conn, last, items_tags=None):
     c = conn.cursor()
-    c.execute(u"select * from ZITEM where ZUPDATED_AT > %s" % str(last))
+    c.execute(u"select z_pk, z_ent, z_opt, zprivate, zcreated_at, zposted_at, zupdated_at, zbody, zlinked_file, zraw_body, ztitle, zurl, zuuid from ZITEM where ZUPDATED_AT > %s" % str(last))
     return [KobitoItem(row, items_tags) for row in c]
 
 ## 最近（＝最後にこのスクリプトを走らせた時以降）の更新アイテムをevernoteに保存
